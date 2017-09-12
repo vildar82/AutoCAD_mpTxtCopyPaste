@@ -1,20 +1,29 @@
-﻿using mpPInterface;
+﻿using System;
+using System.Collections.Generic;
+using ModPlusAPI.Interfaces;
 
 namespace mpTxtCopyPaste
 {
-    public class Interface : IPluginInterface
+    public class Interface : IModPlusFunctionInterface
     {
-        private const string _Name = "mpTxtCopyPaste";
-        private const string _AvailCad = "2016";
-        private const string _LName = "Быстрая копия текста";
-        private const string _Description = "Быстрое копирование содержимого однострочного или многострочного текста";
-        private const string _Author = "Пекшев Александр aka Modis";
-        private const string _Price = "0";
-        public string Name => _Name;
-        public string AvailCad => _AvailCad;
-        public string LName => _LName;
-        public string Description => _Description;
-        public string Author => _Author;
-        public string Price => _Price;
+        public SupportedProduct SupportedProduct => SupportedProduct.AutoCAD;
+        public string Name => "mpTxtCopyPaste";
+        public string AvailProductExternalVersion => "2016";
+        public string FullClassName => string.Empty;
+        public string AppFullClassName => string.Empty;
+        public Guid AddInId => Guid.Empty;
+        public string LName => "Быстрая копия текста";
+        public string Description => "Быстрое копирование содержимого однострочного или многострочного текста";
+        public string Author => "Пекшев Александр aka Modis";
+        public string Price => "0";
+        public bool CanAddToRibbon => true;
+        public string FullDescription => string.Empty;
+        public string ToolTipHelpImage => string.Empty;
+        public List<string> SubFunctionsNames => new List<string>();
+        public List<string> SubFunctionsLames => new List<string>();
+        public List<string> SubDescriptions => new List<string>();
+        public List<string> SubFullDescriptions => new List<string>();
+        public List<string> SubHelpImages => new List<string>();
+        public List<string> SubClassNames => new List<string>();
     }
 }

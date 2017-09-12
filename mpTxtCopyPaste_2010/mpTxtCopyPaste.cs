@@ -6,8 +6,8 @@ using AcApp = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
-using mpMsg;
-using ModPlus;
+using ModPlusAPI;
+using ModPlusAPI.Windows;
 
 namespace mpTxtCopyPaste
 {
@@ -16,12 +16,13 @@ namespace mpTxtCopyPaste
         [CommandMethod("ModPlus", "mpTxtCopyPaste", CommandFlags.UsePickSet)]
         public static void MainFunction()
         {
+            Statistic.SendCommandStarting(new Interface());
+
             try
             {
-                var keepLoopin = true; // Для цикличного выполнения функции
                 var deleteSource = false; // Удаление исходника
                 // Значение по-умолчанию из расширенных данных чертеже
-                var defVal = MpCadHelpers.GetStringXData("mpTxtCopyPaste");
+                var defVal = ModPlus.Helpers.XDataHelpers.GetStringXData("mpTxtCopyPaste");
                 if (!string.IsNullOrEmpty(defVal))
                 {
                     bool tmp;
@@ -34,56 +35,52 @@ namespace mpTxtCopyPaste
                 var ed = doc.Editor;
 
                 var peo = new PromptEntityOptions("\nВыберите текст-исходник:");
-                while (keepLoopin)
+                peo.SetMessageAndKeywords("\nВыберите текст-исходник или [Удалять]", "Delete");
+                peo.AppendKeywordsToMessage = true;
+                peo.SetRejectMessage("\nНеверный выбор!");
+                peo.AddAllowedClass(typeof(DBText), false);
+                peo.AddAllowedClass(typeof(MText), false);
+                peo.AllowNone = true;
+                var per = ed.GetEntity(peo);
+                if (per.Status == PromptStatus.Keyword)
                 {
-                    peo.SetMessageAndKeywords("\nВыберите текст-исходник или [Удалять]", "Delete");
-                    peo.AppendKeywordsToMessage = true;
-                    peo.SetRejectMessage("\nНеверный выбор!");
-                    peo.AddAllowedClass(typeof(DBText), false);
-                    peo.AddAllowedClass(typeof(MText), false);
-                    peo.AllowNone = true;
-                    var per = ed.GetEntity(peo);
-                    if (per.Status == PromptStatus.Keyword)
+                    deleteSource = MessageBox.ShowYesNo("Удалять текст-исходник?", MessageBoxIcon.Question);
+                    // Сохраняем текущее значение как значение по умолчанию
+                    using (doc.LockDocument())
                     {
-                        deleteSource = MpQstWin.Show("Удалять текст-исходник?");
-                        // Сохраняем текущее значение как значение по умолчанию
-                        using (doc.LockDocument())
-                        {
-                            MpCadHelpers.SetStringXData("mpTxtCopyPaste", deleteSource.ToString());
-                        }
+                        ModPlus.Helpers.XDataHelpers.SetStringXData("mpTxtCopyPaste", deleteSource.ToString());
                     }
-                    else if (
-                        per.Status == PromptStatus.None ||
-                        per.Status == PromptStatus.Error ||
-                        per.Status == PromptStatus.Cancel)
-                        keepLoopin = false;
-                    else if (per.Status == PromptStatus.OK)
+                }
+                else if (per.Status == PromptStatus.OK)
+                {
+                    using (doc.LockDocument())
                     {
-                        using (doc.LockDocument())
+                        using (var tr = db.TransactionManager.StartTransaction())
                         {
-                            using (var tr = db.TransactionManager.StartTransaction())
+                            var ent = (Entity)tr.GetObject(per.ObjectId, OpenMode.ForWrite);
+                            var str = string.Empty;
+                            // Если выбранный примитив - однострочный текст
+                            if (ent is DBText)
                             {
-                                var ent = (Entity)tr.GetObject(per.ObjectId, OpenMode.ForWrite);
-                                var str = string.Empty;
-                                // Если выбранный примитив - однострочный текст
-                                if (ent is DBText)
-                                {
-                                    var txt = (DBText)ent;
-                                    str = txt.TextString;
-                                }
-                                // Если выбранный примитив - многострочный текст
-                                else if (ent is MText)
-                                {
-                                    var txt = (MText)ent;
-                                    str = txt.Contents;
-                                }
+                                var txt = (DBText)ent;
+                                str = txt.TextString;
+                            }
+                            // Если выбранный примитив - многострочный текст
+                            else if (ent is MText)
+                            {
+                                var txt = (MText)ent;
+                                str = txt.Contents;
+                            }
+                            while (true)
+                            {
                                 peo = new PromptEntityOptions("\nВыберите текст для замены содержимого");
                                 peo.SetRejectMessage("\nНеверный выбор!");
                                 peo.AddAllowedClass(typeof(DBText), false);
                                 peo.AddAllowedClass(typeof(MText), false);
                                 peo.AllowNone = false;
                                 per = ed.GetEntity(peo);
-                                if (per.Status != PromptStatus.OK) continue;
+                                if (per.Status != PromptStatus.OK)
+                                    break;
                                 var selectedEnt = (Entity)tr.GetObject(per.ObjectId, OpenMode.ForWrite);
                                 if (selectedEnt is DBText)
                                 {
@@ -99,18 +96,19 @@ namespace mpTxtCopyPaste
                                     selectedText.Contents = str;
                                     selectedText.DowngradeOpen();
                                 }
-                                // Delete source
-                                if (deleteSource)
-                                    ent.Erase(true);
-                                tr.Commit();
+                                db.TransactionManager.QueueForGraphicsFlush();
                             }
+                            // Delete source
+                            if (deleteSource)
+                                ent.Erase(true);
+                            tr.Commit();
                         }
                     }
                 }
             }
             catch (System.Exception exception)
             {
-                MpExWin.Show(exception);
+                ExceptionBox.Show(exception);
             }
         }
     }
