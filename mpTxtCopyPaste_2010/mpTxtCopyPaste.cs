@@ -13,6 +13,8 @@ namespace mpTxtCopyPaste
 {
     public class MpTxtCopyPaste
     {
+        private const string LangItem = "mpTxtCopyPaste";
+
         [CommandMethod("ModPlus", "mpTxtCopyPaste", CommandFlags.UsePickSet)]
         public static void MainFunction()
         {
@@ -25,8 +27,7 @@ namespace mpTxtCopyPaste
                 var defVal = ModPlus.Helpers.XDataHelpers.GetStringXData("mpTxtCopyPaste");
                 if (!string.IsNullOrEmpty(defVal))
                 {
-                    bool tmp;
-                    if (bool.TryParse(defVal, out tmp))
+                    if (bool.TryParse(defVal, out var tmp))
                         deleteSource = tmp;
                 }
                 // 
@@ -34,17 +35,17 @@ namespace mpTxtCopyPaste
                 var db = doc.Database;
                 var ed = doc.Editor;
 
-                var peo = new PromptEntityOptions("\nВыберите текст-исходник:");
-                peo.SetMessageAndKeywords("\nВыберите текст-исходник или [Удалять]", "Delete");
+                var peo = new PromptEntityOptions("\n" + Language.GetItem(LangItem, "msg1"));
+                peo.SetMessageAndKeywords("\n" + Language.GetItem(LangItem, "msg2"), "Delete");
                 peo.AppendKeywordsToMessage = true;
-                peo.SetRejectMessage("\nНеверный выбор!");
+                peo.SetRejectMessage("\n" + Language.GetItem(LangItem, "msg3"));
                 peo.AddAllowedClass(typeof(DBText), false);
                 peo.AddAllowedClass(typeof(MText), false);
                 peo.AllowNone = true;
                 var per = ed.GetEntity(peo);
                 if (per.Status == PromptStatus.Keyword)
                 {
-                    deleteSource = MessageBox.ShowYesNo("Удалять текст-исходник?", MessageBoxIcon.Question);
+                    deleteSource = MessageBox.ShowYesNo(Language.GetItem(LangItem, "msg4"), MessageBoxIcon.Question);
                     // Сохраняем текущее значение как значение по умолчанию
                     using (doc.LockDocument())
                     {
@@ -73,8 +74,8 @@ namespace mpTxtCopyPaste
                             }
                             while (true)
                             {
-                                peo = new PromptEntityOptions("\nВыберите текст для замены содержимого");
-                                peo.SetRejectMessage("\nНеверный выбор!");
+                                peo = new PromptEntityOptions("\n" + Language.GetItem(LangItem, "msg5"));
+                                peo.SetRejectMessage("\n" + Language.GetItem(LangItem, "msg3"));
                                 peo.AddAllowedClass(typeof(DBText), false);
                                 peo.AddAllowedClass(typeof(MText), false);
                                 peo.AllowNone = false;
