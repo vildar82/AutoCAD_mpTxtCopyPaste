@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28705.295
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mpTxtCopyPaste_2013", "mpTxtCopyPaste_2013\mpTxtCopyPaste_2013.csproj", "{81068522-A151-46E0-927F-F4C5B4E81352}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mpTxtCopyPaste_2018", "mpTxtCopyPaste_2018\mpTxtCopyPaste_2018.csproj", "{FCE4C837-28D6-4C77-AD36-5ECC043AE2B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mpTxtCopyPaste_2019", "mpTxtCopyPaste_2019\mpTxtCopyPaste_2019.csproj", "{099AAE3A-663F-4FA3-8AB7-A735678429B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mpTxtCopyPaste_2020", "mpTxtCopyPaste_2020\mpTxtCopyPaste_2020.csproj", "{657A8486-4723-48D3-BDA2-D2D4F560AD78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{099AAE3A-663F-4FA3-8AB7-A735678429B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{099AAE3A-663F-4FA3-8AB7-A735678429B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{099AAE3A-663F-4FA3-8AB7-A735678429B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{657A8486-4723-48D3-BDA2-D2D4F560AD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{657A8486-4723-48D3-BDA2-D2D4F560AD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{657A8486-4723-48D3-BDA2-D2D4F560AD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{657A8486-4723-48D3-BDA2-D2D4F560AD78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

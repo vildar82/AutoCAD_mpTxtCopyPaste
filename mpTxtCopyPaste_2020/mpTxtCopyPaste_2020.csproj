@@ -1,59 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6E481582-F95A-491E-BAB8-5FB789A29087}</ProjectGuid>
+    <ProjectGuid>{657A8486-4723-48D3-BDA2-D2D4F560AD78}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>mpTxtCopyPaste</RootNamespace>
-    <AssemblyName>mpTxtCopyPaste_2014</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AssemblyName>mpTxtCopyPaste_2020</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;A2014</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;A2020</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;A2014</DefineConstants>
+    <DefineConstants>TRACE;A2020</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="accoremgd">
-      <HintPath>C:\_Acad dlls\2014\accoremgd.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="acdbmgd">
-      <HintPath>C:\_Acad dlls\2014\acdbmgd.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ModPlusAPI">
-      <HintPath>..\..\..\..\..\..\..\ModPlus\Extensions\ModPlusAPI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ModPlus_2014">
-      <HintPath>..\..\..\..\..\..\..\ModPlus\Extensions\ModPlus_2014.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="..\mpTxtCopyPaste_2013\ModPlusConnector.cs">
       <Link>ModPlusConnector.cs</Link>
@@ -66,16 +53,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="..\mpTxtCopyPaste_2013\Resources\mpTxtCopyPaste_16x16.png">
+    <Resource Include="..\mptxtcopypaste_2013\resources\mpTxtCopyPaste_16x16.png">
       <Link>Resources\mpTxtCopyPaste_16x16.png</Link>
     </Resource>
-    <Resource Include="..\mpTxtCopyPaste_2013\Resources\mpTxtCopyPaste_16x16_dark.png">
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\mptxtcopypaste_2013\resources\mpTxtCopyPaste_16x16_dark.png">
       <Link>Resources\mpTxtCopyPaste_16x16_dark.png</Link>
     </Resource>
-    <Resource Include="..\mpTxtCopyPaste_2013\Resources\mpTxtCopyPaste_32x32.png">
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\mptxtcopypaste_2013\resources\mpTxtCopyPaste_32x32.png">
       <Link>Resources\mpTxtCopyPaste_32x32.png</Link>
     </Resource>
-    <Resource Include="..\mpTxtCopyPaste_2013\Resources\mpTxtCopyPaste_32x32_dark.png">
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\mptxtcopypaste_2013\resources\mpTxtCopyPaste_32x32_dark.png">
       <Link>Resources\mpTxtCopyPaste_32x32_dark.png</Link>
     </Resource>
   </ItemGroup>
@@ -88,11 +81,4 @@ if $(ConfigurationName) == Release (
 "$(ModPlusPostBuild)" "AutoCAD" "$(TargetPath)" "s"
 )</PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

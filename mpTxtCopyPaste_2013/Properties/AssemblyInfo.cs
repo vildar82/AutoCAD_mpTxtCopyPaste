@@ -1,36 +1,31 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// Управление общими сведениями о сборке осуществляется с помощью 
-// набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
-// связанные со сборкой.
 [assembly: AssemblyTitle("mpTxtCopyPaste")]
-[assembly: AssemblyDescription("2013")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("modplus.org")]
 [assembly: AssemblyProduct("ModPlus")]
 [assembly: AssemblyCopyright("Copyright © ModPlus")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
-// Параметр ComVisible со значением FALSE делает типы в сборке невидимыми 
-// для COM-компонентов.  Если требуется обратиться к типу в этой сборке через 
-// COM, задайте атрибуту ComVisible значение TRUE для этого типа.
 [assembly: ComVisible(false)]
-
-// Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("f3d5707c-56e8-4baa-a472-13fa82a3c92e")]
-
-// Сведения о версии сборки состоят из следующих четырех значений:
-//
-//      Основной номер версии
-//      Дополнительный номер версии 
-//   Номер сборки
-//      Редакция
-//
-// Можно задать все значения или принять номера сборки и редакции по умолчанию 
-// используя "*", как показано ниже:
-// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.2.0.0")]
 [assembly: AssemblyFileVersion("1.2.0.0")]
+
+#if A2013
+[assembly: AssemblyDescription("2013")]
+#elif A2014
+[assembly: AssemblyDescription("2014")]
+#elif A2015
+[assembly: AssemblyDescription("2015")]
+#elif A2016
+[assembly: AssemblyDescription("2016")]
+#elif A2017
+[assembly: AssemblyDescription("2017")]
+#elif A2018
+[assembly: AssemblyDescription("2018")]
+#elif A2019
+[assembly: AssemblyDescription("2019")]
+#elif A2020
+[assembly: AssemblyDescription("2020")]
+#endif

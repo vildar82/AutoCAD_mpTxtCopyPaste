@@ -14,7 +14,7 @@ namespace mpTxtCopyPaste
         [CommandMethod("ModPlus", "mpTxtCopyPaste", CommandFlags.UsePickSet)]
         public static void MainFunction()
         {
-            Statistic.SendCommandStarting(new Interface());
+            Statistic.SendCommandStarting(new ModPlusConnector());
 
             try
             {
