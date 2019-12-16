@@ -1,6 +1,7 @@
 ﻿namespace mpTxtCopyPaste
 {
     using System;
+    using System.Globalization;
     using Autodesk.AutoCAD.ApplicationServices;
     using Autodesk.AutoCAD.DatabaseServices;
     using Autodesk.AutoCAD.EditorInput;
@@ -45,16 +46,22 @@
 
                 using (var tr = db.TransactionManager.StartTransaction())
                 {
-                    var str = GetString(per, deleteSource);
+                    var str = GetString(per, deleteSource, ed);
 
-                    while (true)
+                    if (!string.IsNullOrEmpty(str))
                     {
-                        per = PromptDestEntity(ed);
-                        if (per == null)
-                            break;
+                        while (true)
+                        {
+                            per = ed.GetEntity(GetDestinationEntityOptions());
+                            if (per.Status == PromptStatus.Cancel)
+                                break;
+                            if (per.Status != PromptStatus.OK)
+                                continue;
 
-                        SetString(per, str);
-                        db.TransactionManager.QueueForGraphicsFlush();
+                            var destinationEntity = tr.GetObject(per.ObjectId, OpenMode.ForWrite) as Entity;
+                            SetString(destinationEntity, str, ed);
+                            db.TransactionManager.QueueForGraphicsFlush();
+                        }
                     }
 
                     tr.Commit();
@@ -69,7 +76,7 @@
             }
         }
 
-        private static PromptEntityResult PromptDestEntity(Editor ed)
+        private static PromptEntityOptions GetDestinationEntityOptions()
         {
             var peo = new PromptEntityOptions("\n" + Language.GetItem(LangItem, "msg5"));
             peo.SetRejectMessage("\n" + Language.GetItem(LangItem, "msg3"));
@@ -78,8 +85,7 @@
             peo.AddAllowedClass(typeof(MLeader), false);
             peo.AddAllowedClass(typeof(Table), false);
             peo.AllowNone = false;
-            var per = ed.GetEntity(peo);
-            return per.Status != PromptStatus.OK ? null : per;
+            return peo;
         }
 
         private static PromptEntityResult PromptSourceEntity(Document doc, ref bool deleteSource)
@@ -92,6 +98,7 @@
             peo.AddAllowedClass(typeof(MText), false);
             peo.AddAllowedClass(typeof(MLeader), false);
             peo.AddAllowedClass(typeof(Table), false);
+            peo.AddAllowedClass(typeof(Dimension), false);
             peo.AllowNone = true;
             var per = doc.Editor.GetEntity(peo);
 
@@ -112,7 +119,7 @@
             throw new OperationCanceledException();
         }
 
-        private static string GetString(PromptEntityResult prompt, bool deleteSource)
+        private static string GetString(PromptEntityResult prompt, bool deleteSource, Editor ed)
         {
             var mode = deleteSource ? OpenMode.ForWrite : OpenMode.ForRead;
             var ent = prompt.ObjectId.GetObject(mode);
@@ -129,20 +136,30 @@
                     return mText.Contents;
                 case MLeader mLeader:
                     return mLeader.MText.Contents;
+                case Dimension dimension:
+                    return !string.IsNullOrEmpty(dimension.DimensionText)
+                        ? dimension.DimensionText
+                        : Math.Round(dimension.Measurement, dimension.Dimdec)
+                            .ToString(CultureInfo.InvariantCulture)
+                            .Replace(".", dimension.Dimdsep.ToString());
                 case Table table:
-                    var cell = GetCell(table, prompt.PickedPoint);
-                    var str = cell.TextString;
-                    if (deleteSource)
-                        cell.TextString = string.Empty;
-                    return str;
+                    var cell = GetCell(table, ed);
+                    if (cell != null)
+                    {
+                        var str = cell.TextString;
+                        if (deleteSource)
+                            cell.TextString = string.Empty;
+                        return str;
+                    }
+
+                    break;
             }
 
-            throw new InvalidOperationException();
+            return null;
         }
 
-        private static void SetString(PromptEntityResult prompt, string str)
+        private static void SetString(Entity ent, string str, Editor ed)
         {
-            var ent = prompt.ObjectId.GetObject(OpenMode.ForWrite);
             switch (ent)
             {
                 case DBText dbText:
@@ -161,16 +178,25 @@
 
                     break;
                 case Table table:
-                    var cell = GetCell(table, prompt.PickedPoint);
-                    cell.TextString = str;
+                    var cell = GetCell(table, ed);
+                    if (cell != null)
+                        cell.TextString = str;
+                    table.RecomputeTableBlock(true);
                     break;
             }
         }
 
-        private static Cell GetCell(Table table, Point3d picked)
+        private static Cell GetCell(Table table, Editor ed)
         {
-            var hit = table.HitTest(picked, Vector3d.ZAxis);
-            return table.Cells[hit.Row, hit.Column];
+            var r = ed.GetPoint($"\nPick cell");
+            if (r.Status == PromptStatus.OK)
+            {
+                var hit = table.HitTest(r.Value, Vector3d.ZAxis);
+                if (hit.Type == TableHitTestType.Cell)
+                    return table.Cells[hit.Row, hit.Column];
+            }
+
+            return null;
         }
     }
 }
